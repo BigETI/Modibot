@@ -43,5 +43,26 @@ namespace ModibotAPI
         /// <param name="serviceTypeName">Service type name</param>
         /// <returns>Service if successful, otherwise "null"</returns>
         object GetService(string serviceTypeName);
+
+        /// <summary>
+        /// Get services
+        /// </summary>
+        /// <typeparam name="T">Service type</typeparam>
+        /// <returns>Services</returns>
+        T[] GetServices<T>();
+
+        /// <summary>
+        /// Get services
+        /// </summary>
+        /// <param name="serviceType">Service type</param>
+        /// <returns>Services</returns>
+        object[] GetServices(Type serviceType);
+
+        /// <summary>
+        /// Get services
+        /// </summary>
+        /// <param name="serviceTypeName">Service type name</param>
+        /// <returns>Services</returns>
+        object[] GetServices(string serviceTypeName);
     }
 }

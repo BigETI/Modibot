@@ -22,19 +22,14 @@ namespace Modibot.Services
         private ModibotAPI.IServiceProvider serviceProvider;
 
         /// <summary>
-        /// Commands
-        /// </summary>
-        private Commands commands;
-
-        /// <summary>
         /// Modules
         /// </summary>
         private Dictionary<string, IModule> loadedModules = new Dictionary<string, IModule>();
 
         /// <summary>
-        /// Default modules path
+        /// modules path
         /// </summary>
-        public static readonly string DefaultPath = "modules";
+        public static readonly string Path = "modules";
 
         /// <summary>
         /// Loaded modules
@@ -48,7 +43,6 @@ namespace Modibot.Services
         public Modules(ModibotAPI.IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
-            commands = serviceProvider.RequireService<Commands>();
         }
 
         /// <summary>
@@ -75,48 +69,63 @@ namespace Modibot.Services
                 {
                     if (File.Exists(path))
                     {
-                        string full_path = Path.GetFullPath(path);
+                        string full_path = System.IO.Path.GetFullPath(path);
                         Assembly assembly = Assembly.LoadFile(full_path);
                         if (assembly != null)
                         {
                             Type[] types = assembly.GetTypes();
                             if (types != null)
                             {
+                                bool has_module_type = false;
                                 foreach (Type type in types)
                                 {
                                     if (type != null)
                                     {
                                         if (type.IsClass)
                                         {
-                                            object instance = null;
-                                            if (Attribute.IsDefined(type, typeof(ServiceAttribute)))
-                                            {
-                                                instance = serviceProvider.RequireService(type);
-                                            }
                                             if (typeof(IModule).IsAssignableFrom(type))
                                             {
-                                                instance = ((instance == null) ? Activator.CreateInstance(type, true) : instance);
-                                                IModule module = (IModule)instance;
-                                                if (loadedModules.ContainsKey(module.Name))
+                                                if (has_module_type)
                                                 {
-                                                    IModule old_module = loadedModules[module.Name];
-                                                    await old_module.ExitAsync();
-                                                    loadedModules[module.Name] = module;
+                                                    has_module_type = false;
+                                                    break;
                                                 }
                                                 else
                                                 {
-                                                    loadedModules.Add(module.Name, module);
+                                                    has_module_type = true;
                                                 }
                                             }
-                                            if (typeof(ICommand).IsAssignableFrom(type))
+                                        }
+                                    }
+                                }
+                                if (has_module_type)
+                                {
+                                    foreach (Type type in types)
+                                    {
+                                        if (type != null)
+                                        {
+                                            if (type.IsClass)
                                             {
-                                                instance = ((instance == null) ? Activator.CreateInstance(type, true) : instance);
-                                                commands.AddCommand((ICommand)instance);
-                                            }
-                                            if (typeof(ICommandGroup).IsAssignableFrom(type))
-                                            {
-                                                instance = ((instance == null) ? Activator.CreateInstance(type, true) : instance);
-                                                commands.AddCommandGroup((ICommandGroup)instance);
+                                                object instance = null;
+                                                if (Attribute.IsDefined(type, typeof(ServiceAttribute)))
+                                                {
+                                                    instance = serviceProvider.RequireService(type);
+                                                }
+                                                if (typeof(IModule).IsAssignableFrom(type))
+                                                {
+                                                    instance = ((instance == null) ? Activator.CreateInstance(type, true) : instance);
+                                                    IModule module = (IModule)instance;
+                                                    if (loadedModules.ContainsKey(module.Name))
+                                                    {
+                                                        IModule old_module = loadedModules[module.Name];
+                                                        await old_module.ExitAsync();
+                                                        loadedModules[module.Name] = module;
+                                                    }
+                                                    else
+                                                    {
+                                                        loadedModules.Add(module.Name, module);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -142,6 +151,7 @@ namespace Modibot.Services
             {
                 await module.ExitAsync();
             }
+            loadedModules.Clear();
         }
     }
 }

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetPath) $(SolutionDir)\Modibot\bin\$(ConfigurationName)\netcoreapp2.1\modules\$(TargetFileName)" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ModibotAPI">
+      <HintPath>..\ModibotAPI\bin\Release\netstandard2.0\ModibotAPI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,6 @@
 ﻿using ModibotAPI;
+using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 namespace ModibotAdministration
 {
     /// <summary>
-    /// Administration module
+    /// Administration module class
     /// </summary>
     public class AdministrationModule : IModule
     {
@@ -17,31 +19,32 @@ namespace ModibotAdministration
         public string Name => "Administration tools";
 
         /// <summary>
-        /// Version
+        /// Module version
         /// </summary>
-        public string Version => "1.0.0.0";
+        public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
-        /// Author
+        /// Module author
         /// </summary>
         public string Author => "Ethem Kurt";
 
         /// <summary>
-        /// URI
+        /// Module URI
         /// </summary>
         public string URI => "https://github.com/BigETI/Modibot";
 
         /// <summary>
-        /// Initialize (asynchronous)
+        /// Initialize module (asynchronous)
         /// </summary>
+        /// <param name="bot">Bot</param>
         /// <returns>Task</returns>
-        public Task InitAsync()
+        public Task InitAsync(IBot bot)
         {
             return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Exit (asynchronous)
+        /// Exit module (asynchronous)
         /// </summary>
         /// <returns>Task</returns>
         public Task ExitAsync()

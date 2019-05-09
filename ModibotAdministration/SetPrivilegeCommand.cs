@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 namespace ModibotAdministration
 {
     /// <summary>
-    /// Set global privilege command class
+    /// Set privilege command class
     /// </summary>
     public class SetPrivilegeCommand : ICommand
     {
@@ -28,7 +28,7 @@ namespace ModibotAdministration
         /// Command full description
         /// </summary>
         public string FullDescription => "This command sets privilege for a specified user or role" + Environment.NewLine + "Usage: " + Name + " <\"global\" or \"guild\"> <\"role\" or \"user\"> <user ID or role ID> <privilege> <level>";
-        
+
         /// <summary>
         /// Required privileges
         /// </summary>
@@ -61,61 +61,79 @@ namespace ModibotAdministration
                 uint level;
                 if (ulong.TryParse(role_user_id_string, out role_user_id) && uint.TryParse(level_string, out level))
                 {
-                    IPrivileges privileges = commandArguments.Bot.GetService<IPrivileges>();
-                    IChat chat = commandArguments.Bot.GetService<IChat>();
-                    if (privileges != null)
+                    IPrivileges[] privileges_services = commandArguments.Bot.GetServices<IPrivileges>();
+                    IChat[] chat_services = commandArguments.Bot.GetServices<IChat>();
+                    if (privileges_services != null)
                     {
                         switch (global_guild_specifier.ToLower())
                         {
                             case "global":
                                 if (role_user_specifier.ToLower() == "user")
                                 {
-                                    privileges.SetGlobalUserPrivilege(role_user_id, privilege, level);
-                                    privileges.Save();
-                                    if (chat != null)
+                                    foreach (IPrivileges privileges in privileges_services)
                                     {
-                                        if (level == 0U)
+                                        privileges.SetGlobalUserPrivilege(role_user_id, privilege, level);
+                                        privileges.Save();
+                                        foreach (IChat chat in chat_services)
                                         {
-                                            chat.SendMessage("Global privilege \"" + privilege + "\" has been removed from user \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                            if (chat != null)
+                                            {
+                                                if (level == 0U)
+                                                {
+                                                    chat.SendMessage("Global privilege \"" + privilege + "\" has been removed from user \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                }
+                                                else
+                                                {
+                                                    chat.SendMessage("Global privilege \"" + privilege + "\" has been set to level \"" + level + "\" for user \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                }
+                                            }
                                         }
-                                        else
-                                        {
-                                            chat.SendMessage("Global privilege \"" + privilege + "\" has been set to level \"" + level + "\" for user \"" + role_user_id + "\".", commandArguments.MessageChannel);
-                                        }
+                                        ret = ECommandResult.Successful;
                                     }
-                                    ret = ECommandResult.Successful;
                                 }
                                 break;
                             case "guild":
                                 switch (role_user_specifier.ToLower())
                                 {
                                     case "role":
-                                        privileges.SetGuildRolePrivilege(((SocketGuildChannel)(commandArguments.MessageChannel)).Guild.Id, role_user_id, privilege, level);
-                                        privileges.Save();
-                                        if (chat != null)
+                                        foreach (IPrivileges privileges in privileges_services)
                                         {
-                                            if (level == 0U)
+                                            privileges.SetGuildRolePrivilege(((SocketGuildChannel)(commandArguments.MessageChannel)).Guild.Id, role_user_id, privilege, level);
+                                            privileges.Save();
+                                            foreach (IChat chat in chat_services)
                                             {
-                                                chat.SendMessage("Guild privilege \"" + privilege + "\" has been removed from role \"" + role_user_id + "\".", commandArguments.MessageChannel);
-                                            }
-                                            else
-                                            {
-                                                chat.SendMessage("Guild privilege \"" + privilege + "\" has been set to level \"" + level + "\" for role \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                if (chat != null)
+                                                {
+                                                    if (level == 0U)
+                                                    {
+                                                        chat.SendMessage("Guild privilege \"" + privilege + "\" has been removed from role \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                    }
+                                                    else
+                                                    {
+                                                        chat.SendMessage("Guild privilege \"" + privilege + "\" has been set to level \"" + level + "\" for role \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                    }
+                                                }
                                             }
                                         }
                                         break;
                                     case "user":
-                                        if (chat != null)
+                                        foreach (IPrivileges privileges in privileges_services)
                                         {
                                             privileges.SetGuildUserPrivilege(((SocketGuildChannel)(commandArguments.MessageChannel)).Guild.Id, role_user_id, privilege, level);
                                             privileges.Save();
-                                            if (level == 0U)
+                                            foreach (IChat chat in chat_services)
                                             {
-                                                chat.SendMessage("Guild privilege \"" + privilege + "\" has been removed from user \"" + role_user_id + "\".", commandArguments.MessageChannel);
-                                            }
-                                            else
-                                            {
-                                                chat.SendMessage("Guild privilege \"" + privilege + "\" has been set to level \"" + level + "\" for user \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                if (chat != null)
+                                                {
+                                                    if (level == 0U)
+                                                    {
+                                                        chat.SendMessage("Guild privilege \"" + privilege + "\" has been removed from user \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                    }
+                                                    else
+                                                    {
+                                                        chat.SendMessage("Guild privilege \"" + privilege + "\" has been set to level \"" + level + "\" for user \"" + role_user_id + "\".", commandArguments.MessageChannel);
+                                                    }
+                                                }
                                             }
                                         }
                                         break;

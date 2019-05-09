@@ -6,13 +6,8 @@ namespace ModibotAPI
     /// <summary>
     /// Bot interface
     /// </summary>
-    public interface IBot : IServiceProvider
+    public interface IBot : IServiceProvider, IModules
     {
-        /// <summary>
-        /// Services
-        /// </summary>
-        IServiceProvider Services { get; }
-
         /// <summary>
         /// Exit bot
         /// </summary>

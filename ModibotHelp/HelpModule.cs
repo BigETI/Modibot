@@ -1,4 +1,6 @@
 ﻿using ModibotAPI;
+using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 /// <summary>
@@ -19,7 +21,7 @@ namespace ModibotHelp
         /// <summary>
         /// Module version
         /// </summary>
-        public string Version => "1.0.0.0";
+        public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Module author
@@ -34,8 +36,9 @@ namespace ModibotHelp
         /// <summary>
         /// Initialize (asynchronous)
         /// </summary>
+        /// <param name="bot">Bot</param>
         /// <returns>Task</returns>
-        public Task InitAsync()
+        public Task InitAsync(IBot bot)
         {
             return Task.CompletedTask;
         }

@@ -9,6 +9,9 @@ using System.Text;
 /// </summary>
 namespace ModibotAdministration
 {
+    /// <summary>
+    /// Services command class
+    /// </summary>
     public class ServicesCommand : ICommand
     {
         /// <summary>
@@ -29,7 +32,7 @@ namespace ModibotAdministration
         /// <summary>
         /// Required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
+        public ReadOnlyDictionary<string, uint> RequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
         {
             { "bot.administrator", 1U }
         });
@@ -47,16 +50,15 @@ namespace ModibotAdministration
         public ECommandResult Execute(ICommandArguments commandArguments)
         {
             ECommandResult ret = ECommandResult.Failed;
-            ModibotAPI.IServiceProvider service_provider = commandArguments.Bot.Services;
-            IChat chat = commandArguments.Bot.GetService<IChat>();
-            if ((service_provider != null) && (chat != null))
+            IChat[] chat_services = commandArguments.Bot.GetServices<IChat>();
+            if (chat_services != null)
             {
                 EmbedBuilder embed_builder = new EmbedBuilder();
                 StringBuilder loaded_services = new StringBuilder();
                 bool first = true;
                 embed_builder.WithTitle(":tickets: Services");
                 embed_builder.WithColor(Color.Red);
-                foreach (object service in service_provider.LoadedServices)
+                foreach (object service in commandArguments.Bot.LoadedServices)
                 {
                     if (first)
                     {
@@ -73,7 +75,14 @@ namespace ModibotAdministration
                     loaded_services.Append("No services found.");
                 }
                 embed_builder.AddField("Loaded services", loaded_services.ToString());
-                chat.SendEmbed(embed_builder.Build(), commandArguments.MessageChannel);
+                Embed embed = embed_builder.Build();
+                foreach (IChat chat in chat_services)
+                {
+                    if (chat != null)
+                    {
+                        chat.SendEmbed(embed, commandArguments.MessageChannel);
+                    }
+                }
                 ret = ECommandResult.Successful;
             }
             return ret;

@@ -123,6 +123,49 @@ namespace Modibot
         }
 
         /// <summary>
+        /// Get services
+        /// </summary>
+        /// <typeparam name="T">Service type</typeparam>
+        /// <returns>Services</returns>
+        public T[] GetServices<T>()
+        {
+            return Array.ConvertAll(GetServices(typeof(T)), (service) =>
+            {
+                return (T)service;
+            });
+        }
+
+        /// <summary>
+        /// Get services
+        /// </summary>
+        /// <param name="serviceType">Service type</param>
+        /// <returns>Services</returns>
+        public object[] GetServices(Type serviceType)
+        {
+            List<object> services = new List<object>();
+            foreach (object service in this.services)
+            {
+                if (serviceType.IsAssignableFrom(service.GetType()))
+                {
+                    services.Add(service);
+                }
+            }
+            object[] ret = services.ToArray();
+            services.Clear();
+            return ret;
+        }
+
+        /// <summary>
+        /// Get services
+        /// </summary>
+        /// <param name="serviceTypeName">Service type name</param>
+        /// <returns>Services</returns>
+        public object[] GetServices(string serviceTypeName)
+        {
+            return GetServices(Type.GetType(serviceTypeName));
+        }
+
+        /// <summary>
         /// Dispose
         /// </summary>
         public void Dispose()

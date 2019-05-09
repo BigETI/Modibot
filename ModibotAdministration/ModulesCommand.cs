@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 namespace ModibotAdministration
 {
     /// <summary>
-    /// Modules command
+    /// Modules command class
     /// </summary>
     public class ModulesCommand : ICommand
     {
@@ -32,7 +32,7 @@ namespace ModibotAdministration
         /// <summary>
         /// Required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
+        public ReadOnlyDictionary<string, uint> RequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
         {
             { "bot.administrator", 1U }
         });
@@ -43,6 +43,18 @@ namespace ModibotAdministration
         public string CommandGroup => "administration";
 
         /// <summary>
+        /// Prepare embed builder
+        /// </summary>
+        /// <returns>Embed builder</returns>
+        private static EmbedBuilder PrepareEmbedBuilder()
+        {
+            EmbedBuilder ret = new EmbedBuilder();
+            ret.WithTitle(":floppy_disk: Modules");
+            ret.WithColor(Color.Teal);
+            return ret;
+        }
+
+        /// <summary>
         /// Execute command
         /// </summary>
         /// <param name="commandArguments">Command arguments</param>
@@ -50,18 +62,31 @@ namespace ModibotAdministration
         public ECommandResult Execute(ICommandArguments commandArguments)
         {
             ECommandResult ret = ECommandResult.Failed;
-            IModules modules = commandArguments.Bot.GetService<IModules>();
-            IChat chat = commandArguments.Bot.GetService<IChat>();
-            if ((modules != null) && (chat != null))
+            IModules[] modules_services = commandArguments.Bot.GetServices<IModules>();
+            IChat[] chat_services = commandArguments.Bot.GetServices<IChat>();
+            if ((modules_services != null) && (chat_services != null))
             {
-                EmbedBuilder embed_builder = new EmbedBuilder();
-                embed_builder.WithTitle(":floppy_disk: Modules");
-                embed_builder.WithColor(Color.Teal);
-                foreach (IModule module in modules.LoadedModules.Values)
+                List<Embed> embeds = new List<Embed>();
+                foreach (IModules modules in modules_services)
                 {
-                    embed_builder.AddField(module.Name, "Version: " + module.Version + Environment.NewLine + "Author: " + module.Author + Environment.NewLine + "URI: " + module.URI);
+                    EmbedBuilder embed_builder = PrepareEmbedBuilder();
+                    foreach (IModule module in modules.LoadedModules.Values)
+                    {
+                        embed_builder.AddField(module.Name, "Version: " + module.Version + Environment.NewLine + "Author: " + module.Author + Environment.NewLine + "URI: " + module.URI);
+                    }
+                    embeds.Add(embed_builder.Build());
                 }
-                chat.SendEmbed(embed_builder.Build(), commandArguments.MessageChannel);
+                foreach (IChat chat in chat_services)
+                {
+                    if (chat != null)
+                    {
+                        foreach (Embed embed in embeds)
+                        {
+                            chat.SendEmbed(embed, commandArguments.MessageChannel);
+                        }
+                    }
+                }
+                embeds.Clear();
                 ret = ECommandResult.Successful;
             }
             return ret;

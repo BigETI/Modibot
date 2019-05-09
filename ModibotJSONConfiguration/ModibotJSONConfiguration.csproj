@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="ModibotAPI">
+      <HintPath>..\ModibotAPI\bin\Release\netstandard2.0\ModibotAPI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

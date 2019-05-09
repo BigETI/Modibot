@@ -20,6 +20,9 @@
     <Reference Include="ModibotAPI">
       <HintPath>..\ModibotAPI\bin\Release\netstandard2.0\ModibotAPI.dll</HintPath>
     </Reference>
+    <Reference Include="ModibotJSONConfiguration">
+      <HintPath>..\ModibotJSONConfiguration\bin\Release\netstandard2.0\ModibotJSONConfiguration.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
-
+﻿/// <summary>
+/// Modibot API namespace
+/// </summary>
 namespace ModibotAPI
 {
     /// <summary>

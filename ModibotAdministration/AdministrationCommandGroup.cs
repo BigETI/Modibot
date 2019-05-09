@@ -13,7 +13,7 @@ namespace ModibotAdministration
         /// <summary>
         /// Command group icon
         /// </summary>
-        public string Icon => ":cop:";
+        public string Icon => ":tools:";
 
         /// <summary>
         /// Command group name

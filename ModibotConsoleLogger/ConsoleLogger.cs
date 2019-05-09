@@ -12,7 +12,7 @@ namespace ModibotConsoleLogger
     /// Console logger class
     /// </summary>
     [Service]
-    public class ConsoleLogger : ILogger
+    public class ConsoleLogger
     {
         /// <summary>
         /// Standard output
@@ -25,9 +25,9 @@ namespace ModibotConsoleLogger
         private TextWriter errorOutput;
 
         /// <summary>
-        /// Configuration
+        /// Console logger configuration
         /// </summary>
-        private IConfiguration configuration;
+        internal ConsoleLoggerConfiguration consoleLoggerConfiguration;
 
         /// <summary>
         /// Standard output
@@ -73,7 +73,7 @@ namespace ModibotConsoleLogger
         /// <param name="serviceProvider">Service provider</param>
         public ConsoleLogger(ModibotAPI.IServiceProvider serviceProvider)
         {
-            configuration = serviceProvider.GetService<IConfiguration>();
+            consoleLoggerConfiguration = serviceProvider.GetService<ConsoleLoggerConfiguration>();
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace ModibotConsoleLogger
         /// <returns>Task</returns>
         public Task LogEventAsync(string text, bool isError)
         {
-            return (configuration.Logger.EnableLogger ? ((text != null) ? ((text.Length > 0) ? (isError ? ErrorOutput : StandardOutput).WriteLineAsync(text) : Task.CompletedTask) : Task.CompletedTask) : Task.CompletedTask);
+            return ((consoleLoggerConfiguration == null) ? Task.CompletedTask : (consoleLoggerConfiguration.Data.EnableLogger ? ((text != null) ? ((text.Length > 0) ? (isError ? ErrorOutput : StandardOutput).WriteLineAsync(text) : Task.CompletedTask) : Task.CompletedTask) : Task.CompletedTask));
         }
     }
 }

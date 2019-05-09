@@ -10,7 +10,7 @@ namespace Modibot
     /// Guild configuration class
     /// </summary>
     [DataContract]
-    internal class GuildConfiguration : IGuildConfiguration
+    public class GuildConfiguration
     {
         /// <summary>
         /// Enable TTS

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Modibot API namespace
@@ -18,7 +19,7 @@ namespace ModibotAPI
         /// <summary>
         /// Module version
         /// </summary>
-        string Version { get; }
+        Version Version { get; }
 
         /// <summary>
         /// Module author
@@ -33,8 +34,9 @@ namespace ModibotAPI
         /// <summary>
         /// Initialize module (asynchronous)
         /// </summary>
+        /// <param name="bot">Bot</param>
         /// <returns>Task</returns>
-        Task InitAsync();
+        Task InitAsync(IBot bot);
 
         /// <summary>
         /// Exit module (asynchronous)

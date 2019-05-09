@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Ethem Kurt</Authors>
+    <Description>Standard console logger module for Modibot.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +13,9 @@
   <ItemGroup>
     <Reference Include="ModibotAPI">
       <HintPath>..\ModibotAPI\bin\Release\netstandard2.0\ModibotAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="ModibotJSONConfiguration">
+      <HintPath>..\ModibotJSONConfiguration\bin\Release\netstandard2.0\ModibotJSONConfiguration.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -1,6 +1,4 @@
-﻿using Discord;
-
-/// <summary>
+﻿/// <summary>
 /// Modibot API namespace
 /// </summary>
 namespace ModibotAPI
@@ -8,15 +6,8 @@ namespace ModibotAPI
     /// <summary>
     /// Configuration interface
     /// </summary>
-    public interface IConfiguration : IConfigurationData
+    public interface IConfiguration
     {
-        /// <summary>
-        /// Get guild configuration
-        /// </summary>
-        /// <param name="guild">Guild</param>
-        /// <returns>Guild configuration if successful, otherwise "null"</returns>
-        IGuildConfiguration GetGuildConfiguration(IGuild guild);
-
         /// <summary>
         /// Save configuration
         /// </summary>

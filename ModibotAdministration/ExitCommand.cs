@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace ModibotAdministration
 {
     /// <summary>
-    /// Exit command
+    /// Exit command class
     /// </summary>
     public class ExitCommand : ICommand
     {
@@ -30,7 +30,7 @@ namespace ModibotAdministration
         /// <summary>
         /// Required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
+        public ReadOnlyDictionary<string, uint> RequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
         {
             { "bot.administrator", 1U }
         });
@@ -47,10 +47,16 @@ namespace ModibotAdministration
         /// <returns></returns>
         public ECommandResult Execute(ICommandArguments commandArguments)
         {
-            IChat chat = commandArguments.Bot.GetService<IChat>();
-            if (chat != null)
+            IChat[] chat_services = commandArguments.Bot.GetServices<IChat>();
+            if (chat_services != null)
             {
-                chat.SendMessage("Goodbye!", commandArguments.MessageChannel);
+                foreach (IChat chat in chat_services)
+                {
+                    if (chat != null)
+                    {
+                        chat.SendMessage("Goodbye!", commandArguments.MessageChannel);
+                    }
+                }
             }
             commandArguments.Bot.Exit();
             return ECommandResult.Successful;
