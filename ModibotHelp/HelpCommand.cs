@@ -30,9 +30,9 @@ namespace ModibotHelp
         public string FullDescription => "This command shows help topics";
 
         /// <summary>
-        /// Required privileges
+        /// Force required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>());
+        public ReadOnlyDictionary<string, uint> ForceRequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>());
 
         /// <summary>
         /// Command group
@@ -98,7 +98,7 @@ namespace ModibotHelp
                             embed_builder.AddField("Description", command.Value.Description, true);
                             embed_builder.AddField("Full description", command.Value.FullDescription);
                             StringBuilder required_privileges = new StringBuilder();
-                            foreach (KeyValuePair<string, uint> privilege in command.Value.RequiredPrivileges)
+                            foreach (KeyValuePair<string, uint> privilege in command.Value.ForceRequiredPrivileges)
                             {
                                 required_privileges.Append("\"");
                                 required_privileges.Append(privilege.Key);

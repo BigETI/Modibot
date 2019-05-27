@@ -23,15 +23,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotPrivileges", "Modibo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotJSONConfiguration", "ModibotJSONConfiguration\ModibotJSONConfiguration.csproj", "{2322CD5B-1F64-479D-ADBE-5CA34B015C92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModibotInformation", "ModibotInformation\ModibotInformation.csproj", "{93252E9E-B6E1-450C-9D91-46085456D396}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotInformation", "ModibotInformation\ModibotInformation.csproj", "{93252E9E-B6E1-450C-9D91-46085456D396}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModibotModeration", "ModibotModeration\ModibotModeration.csproj", "{4185106A-7B79-42C6-ACFF-92B517D49403}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotModeration", "ModibotModeration\ModibotModeration.csproj", "{4185106A-7B79-42C6-ACFF-92B517D49403}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModibotSocialMedia", "ModibotSocialMedia\ModibotSocialMedia.csproj", "{4C7657D7-B5B8-4CC8-8B4C-88930A6C81BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotSocialMedia", "ModibotSocialMedia\ModibotSocialMedia.csproj", "{4C7657D7-B5B8-4CC8-8B4C-88930A6C81BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModibotWebInterface", "ModibotWebInterface\ModibotWebInterface.csproj", "{46866A7E-784C-4668-BD91-DDE2FD78E9D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotWebInterface", "ModibotWebInterface\ModibotWebInterface.csproj", "{46866A7E-784C-4668-BD91-DDE2FD78E9D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModibotDatabaseLogger", "ModibotDatabaseLogger\ModibotDatabaseLogger.csproj", "{7AF45C6C-812C-4C81-A1F8-7560FF69FF32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModibotDatabaseLogger", "ModibotDatabaseLogger\ModibotDatabaseLogger.csproj", "{7AF45C6C-812C-4C81-A1F8-7560FF69FF32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModibotActions", "ModibotActions\ModibotActions.csproj", "{DC2D5B88-5F42-4E1A-AB9F-8B550C45BBFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{7AF45C6C-812C-4C81-A1F8-7560FF69FF32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AF45C6C-812C-4C81-A1F8-7560FF69FF32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AF45C6C-812C-4C81-A1F8-7560FF69FF32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC2D5B88-5F42-4E1A-AB9F-8B550C45BBFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC2D5B88-5F42-4E1A-AB9F-8B550C45BBFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC2D5B88-5F42-4E1A-AB9F-8B550C45BBFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC2D5B88-5F42-4E1A-AB9F-8B550C45BBFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -43,5 +43,17 @@ namespace ModibotAPI
         /// </summary>
         /// <returns>Task</returns>
         Task ExitAsync();
+
+        /// <summary>
+        /// Module load (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        Task ModuleLoadAsync(IModule module);
+
+        /// <summary>
+        /// Module unload (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        Task ModuleUnloadAsync(IModule module);
     }
 }

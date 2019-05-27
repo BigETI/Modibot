@@ -14,12 +14,12 @@ namespace ModibotAPI
         /// <summary>
         /// Has user required privileges
         /// </summary>
-        /// <param name="command">Command</param>
+        /// <param name="requiredPrivileges">Required privileges</param>
         /// <param name="user">User</param>
         /// <param name="messageChannel">Message channel</param>
         /// <param name="missingPrivileges">Missing privileges (out)</param>
         /// <returns>"true" if user has required privileges, otherwise "false"</returns>
-        bool HasPrivileges(ICommand command, SocketUser user, ISocketMessageChannel messageChannel, out IDictionary<string, uint> missingPrivileges);
+        bool HasPrivileges(IReadOnlyDictionary<string, uint> requiredPrivileges, SocketUser user, ISocketMessageChannel messageChannel, out IDictionary<string, uint> missingPrivileges);
 
         /// <summary>
         /// Set global user privilege

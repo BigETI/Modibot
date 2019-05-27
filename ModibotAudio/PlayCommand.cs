@@ -29,9 +29,9 @@ namespace ModibotAudio
         public string FullDescription => "This command plays music from the specified URI" + Environment.NewLine + "Usage: " + Name + " <URI>";
 
         /// <summary>
-        /// Required privileges
+        /// Force required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>());
+        public ReadOnlyDictionary<string, uint> ForceRequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>());
 
         /// <summary>
         /// Command group

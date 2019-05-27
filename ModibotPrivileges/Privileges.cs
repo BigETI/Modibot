@@ -25,16 +25,16 @@ namespace ModibotPrivileges
         /// <summary>
         /// Has user required privileges
         /// </summary>
-        /// <param name="command">Command</param>
+        /// <param name="requiredPrivileges">Required privileges</param>
         /// <param name="user">User</param>
         /// <param name="messageChannel">Message channel</param>
         /// <param name="missingPrivileges">Missing privileges (out)</param>
         /// <returns>"true" if user has required privileges, otherwise "false"</returns>
-        public bool HasPrivileges(ICommand command, SocketUser user, ISocketMessageChannel messageChannel, out IDictionary<string, uint> missingPrivileges)
+        public bool HasPrivileges(IReadOnlyDictionary<string, uint> requiredPrivileges, SocketUser user, ISocketMessageChannel messageChannel, out IDictionary<string, uint> missingPrivileges)
         {
             bool ret = false;
             missingPrivileges = new Dictionary<string, uint>();
-            if ((command != null) && (user != null) && (messageChannel != null))
+            if ((requiredPrivileges != null) && (user != null) && (messageChannel != null))
             {
                 ret = true;
                 SocketGuildUser guild_user = user as SocketGuildUser;
@@ -57,7 +57,7 @@ namespace ModibotPrivileges
                         }
                     }
                 }
-                foreach (KeyValuePair<string, uint> required_privilege in command.RequiredPrivileges)
+                foreach (KeyValuePair<string, uint> required_privilege in requiredPrivileges)
                 {
                     if (required_privilege.Value > 0)
                     {

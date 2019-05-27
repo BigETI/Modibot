@@ -1,4 +1,5 @@
 ﻿using Discord.WebSocket;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -78,5 +79,19 @@ namespace ModibotAPI
         /// <param name="commandGroup">Command group</param>
         /// <returns>Commands from command group</returns>
         ICommand[] FromCommandGroup(ICommandGroup commandGroup);
+
+        /// <summary>
+        /// Can command execute
+        /// </summary>
+        /// <param name="command">Command</param>
+        /// <returns>"true" if command can be executed, otherwise "false"</returns>
+        bool CanCommandExecute(ICommand command);
+
+        /// <summary>
+        /// Get required command privileges
+        /// </summary>
+        /// <param name="command">Command</param>
+        /// <returns>Command</returns>
+        IReadOnlyDictionary<string, uint> GetRequiredCommandPrivileges(ICommand command);
     }
 }

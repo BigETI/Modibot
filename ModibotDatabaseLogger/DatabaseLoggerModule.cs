@@ -53,5 +53,25 @@ namespace ModibotDatabaseLogger
             // TODO
             return Task.CompletedTask;
         }
+
+        /// <summary>
+        /// Module load (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <returns>Task</returns>
+        public Task ModuleLoadAsync(IModule module)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Module unload (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <returns>Task</returns>
+        public Task ModuleUnloadAsync(IModule module)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

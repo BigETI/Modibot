@@ -4,19 +4,19 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 /// <summary>
-/// Modibot administration namespace
+/// Modibot actions namespace
 /// </summary>
-namespace ModibotAdministration
+namespace ModibotActions
 {
     /// <summary>
-    /// Administration module class
+    /// Actions module
     /// </summary>
-    public class AdministrationModule : IModule
+    public class ActionsModule : IModule
     {
         /// <summary>
         /// Module name
         /// </summary>
-        public string Name => "Administration tools";
+        public string Name => "Actions";
 
         /// <summary>
         /// Module version
@@ -34,7 +34,7 @@ namespace ModibotAdministration
         public string URI => "https://github.com/BigETI/Modibot";
 
         /// <summary>
-        /// Initialize module (asynchronous)
+        /// Initialize (asynchronous)
         /// </summary>
         /// <param name="bot">Bot</param>
         /// <returns>Task</returns>
@@ -44,7 +44,7 @@ namespace ModibotAdministration
         }
 
         /// <summary>
-        /// Exit module (asynchronous)
+        /// Exit (asynchronous)
         /// </summary>
         /// <returns>Task</returns>
         public Task ExitAsync()

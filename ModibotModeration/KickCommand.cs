@@ -30,7 +30,7 @@ namespace ModibotModeration
         /// <summary>
         /// Required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>());
+        public ReadOnlyDictionary<string, uint> ForceRequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>());
 
         /// <summary>
         /// Command group

@@ -30,9 +30,9 @@ namespace ModibotAdministration
         public string FullDescription => "This command sets privilege for a specified user or role" + Environment.NewLine + "Usage: " + Name + " <\"global\" or \"guild\"> <\"role\" or \"user\"> <user ID or role ID> <privilege> <level>";
 
         /// <summary>
-        /// Required privileges
+        /// Force required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
+        public ReadOnlyDictionary<string, uint> ForceRequiredPrivileges => new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
         {
             { "bot.administrator", 1U }
         });

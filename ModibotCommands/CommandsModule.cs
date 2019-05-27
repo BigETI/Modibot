@@ -36,16 +36,22 @@ namespace ModibotCommands
         public string URI => "https://github.com/BigETI/Modibot";
 
         /// <summary>
-        /// Initialize (asynchronous)
+        /// Bot
         /// </summary>
-        /// <param name="bot">Bot</param>
-        /// <returns>Task</returns>
-        public Task InitAsync(IBot bot)
+        private IBot bot;
+
+        /// <summary>
+        /// Rebuild commands
+        /// </summary>
+        /// <returns>Commands</returns>
+        private Commands RebuildCommands()
         {
-            Commands commands = bot.GetService<Commands>();
-            if (commands != null)
+            Commands ret = bot.GetService<Commands>();
+            if ((bot != null) && (ret != null))
             {
+
                 Dictionary<string, Assembly> assemblies = new Dictionary<string, Assembly>();
+                ret.Clear();
                 foreach (IModule module in bot.LoadedModules.Values)
                 {
                     if (module != null)
@@ -73,12 +79,12 @@ namespace ModibotCommands
                                     if (typeof(ICommand).IsAssignableFrom(type))
                                     {
                                         instance = Activator.CreateInstance(type);
-                                        commands.AddCommand((ICommand)instance);
+                                        ret.AddCommand((ICommand)instance);
                                     }
                                     if (typeof(ICommandGroup).IsAssignableFrom(type))
                                     {
                                         instance = ((instance == null) ? Activator.CreateInstance(type) : instance);
-                                        commands.AddCommandGroup((ICommandGroup)instance);
+                                        ret.AddCommandGroup((ICommandGroup)instance);
                                     }
                                 }
                             }
@@ -87,49 +93,68 @@ namespace ModibotCommands
                 }
                 assemblies.Clear();
             }
-            DiscordSocketClient discord_client = bot.GetService<DiscordSocketClient>();
-            if (discord_client != null)
+            return ret;
+        }
+
+        /// <summary>
+        /// Initialize (asynchronous)
+        /// </summary>
+        /// <param name="bot">Bot</param>
+        /// <returns>Task</returns>
+        public Task InitAsync(IBot bot)
+        {
+            this.bot = bot;
+            Commands commands = RebuildCommands();
+            if (commands != null)
             {
-                discord_client.MessageReceived += async (message) =>
+                commands.CommandsConfiguration = bot.GetService<CommandsConfiguration>();
+                DiscordSocketClient discord_client = bot.GetService<DiscordSocketClient>();
+                if (discord_client != null)
                 {
-                    if (message.Author.Id != discord_client.CurrentUser.Id)
+                    discord_client.MessageReceived += async (message) =>
                     {
-                        if (message.Content != null)
+                        if (message.Author.Id != discord_client.CurrentUser.Id)
                         {
-                            CommandsConfiguration command_configuration = bot.GetService<CommandsConfiguration>();
-                            if (command_configuration != null)
+                            if (message.Content != null)
                             {
-                                string possible_command = message.Content.TrimStart();
-                                if (possible_command.StartsWith(command_configuration.Data.Delimiter))
+                                CommandsConfiguration command_configuration = bot.GetService<CommandsConfiguration>();
+                                if (command_configuration != null)
                                 {
-                                    string command = possible_command.Substring(command_configuration.Data.Delimiter.Length);
-                                    ICommandResult command_result = await commands.ExecuteAsync(command, message.Author, message.Channel, bot);
-                                    string msg = null;
-                                    switch (command_result.Result)
+                                    string possible_command = message.Content.TrimStart();
+                                    if (possible_command.StartsWith(command_configuration.Data.Delimiter))
                                     {
-                                        case ECommandResult.Failed:
-                                            msg = string.Format(command_configuration.Data.FailedText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
-                                            break;
-                                        case ECommandResult.Successful:
-                                            msg = string.Format(command_configuration.Data.SuccessfulText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
-                                            break;
-                                        case ECommandResult.Denied:
-                                            msg = string.Format(command_configuration.Data.DeniedText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
-                                            break;
-                                    }
-                                    if (msg != null)
-                                    {
-                                        if (msg.Length > 0)
+                                        string command = possible_command.Substring(command_configuration.Data.Delimiter.Length);
+                                        ICommandResult command_result = await commands.ExecuteAsync(command, message.Author, message.Channel, bot);
+                                        string msg = null;
+                                        switch (command_result.Result)
                                         {
-                                            IChat[] chat_services = bot.GetServices<IChat>();
-                                            if (chat_services != null)
+                                            case ECommandResult.Failed:
+                                                msg = string.Format(command_configuration.Data.FailedText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
+                                                break;
+                                            case ECommandResult.Successful:
+                                                msg = string.Format(command_configuration.Data.SuccessfulText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
+                                                break;
+                                            case ECommandResult.Denied:
+                                                msg = string.Format(command_configuration.Data.DeniedText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
+                                                break;
+                                            case ECommandResult.Disabled:
+                                                msg = string.Format(command_configuration.Data.DisabledText, command_result.CompiledCommand.CommandName, command_result.CompiledCommand.CompiledCommandArguments.RawArguments);
+                                                break;
+                                        }
+                                        if (msg != null)
+                                        {
+                                            if (msg.Length > 0)
                                             {
-                                                foreach (IChat chat in chat_services)
+                                                IChat[] chat_services = bot.GetServices<IChat>();
+                                                if (chat_services != null)
                                                 {
-                                                    await chat.SendMessageAsync(msg, message.Channel);
-                                                    if (command_result.Result == ECommandResult.Failed)
+                                                    foreach (IChat chat in chat_services)
                                                     {
-                                                        await commands.ExecuteAsync("help " + command, message.Author, message.Channel, bot);
+                                                        await chat.SendMessageAsync(msg, message.Channel);
+                                                        if (command_result.Result == ECommandResult.Failed)
+                                                        {
+                                                            await commands.ExecuteAsync("help " + command, message.Author, message.Channel, bot);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -138,8 +163,8 @@ namespace ModibotCommands
                                 }
                             }
                         }
-                    }
-                };
+                    };
+                }
             }
             return Task.CompletedTask;
         }
@@ -150,6 +175,29 @@ namespace ModibotCommands
         /// <returns>Task</returns>
         public Task ExitAsync()
         {
+            bot = null;
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Module load (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <returns>Task</returns>
+        public Task ModuleLoadAsync(IModule module)
+        {
+            RebuildCommands();
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Module unload (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <returns>Task</returns>
+        public Task ModuleUnloadAsync(IModule module)
+        {
+            RebuildCommands();
             return Task.CompletedTask;
         }
     }

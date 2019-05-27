@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 /// <summary>
 /// Modibot commands configuration
@@ -32,6 +33,11 @@ namespace ModibotCommands
         public static readonly string DefaultCommandDenied = "You are not allowed to execute \"{0}\".";
 
         /// <summary>
+        /// Default command disabled text
+        /// </summary>
+        public static readonly string DefaultCommandDisabled = "Command \"{0}\" has been disabled.";
+
+        /// <summary>
         /// Command delimiter
         /// </summary>
         [DataMember]
@@ -54,6 +60,17 @@ namespace ModibotCommands
         /// </summary>
         [DataMember]
         private string deniedText;
+
+        /// <summary>
+        /// Command disabled text
+        /// </summary>
+        [DataMember]
+        private string disabledText;
+
+        /// <summary>
+        /// Commands
+        /// </summary>
+        private Dictionary<string, CommandConfigurationData> commands;
 
         /// <summary>
         /// Command delimiter
@@ -164,6 +181,47 @@ namespace ModibotCommands
                 {
                     deniedText = value;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Command disabled text
+        /// </summary>
+        public string DisabledText
+        {
+            get
+            {
+                if (disabledText == null)
+                {
+                    disabledText = DefaultCommandDisabled;
+                }
+                return disabledText;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    disabledText = DefaultCommandDisabled;
+                }
+                else
+                {
+                    disabledText = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Commands
+        /// </summary>
+        public Dictionary<string, CommandConfigurationData> Commands
+        {
+            get
+            {
+                if (commands == null)
+                {
+                    commands = new Dictionary<string, CommandConfigurationData>();
+                }
+                return commands;
             }
         }
     }

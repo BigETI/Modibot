@@ -233,6 +233,45 @@ namespace Modibot
             {
                 await Console.Error.WriteLineAsync("Configuration module is required!");
             }
+            Exit();
+        }
+
+        /// <summary>
+        /// Load module (asynchronous)
+        /// </summary>
+        /// <param name="path">Module path</param>
+        /// <returns>Module task</returns>
+        public Task<IModule> LoadModuleAsync(string path)
+        {
+            Task<IModule> ret = new Task<IModule>(() =>
+            {
+                IModule result = Modules.LoadModuleAsync(path).GetAwaiter().GetResult();
+                if (result != null)
+                {
+                    result.InitAsync(this);
+                }
+                return result;
+            });
+            ret.Start();
+            return ret;
+        }
+
+        /// <summary>
+        /// Unload module
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <returns>Task</returns>
+        public Task UnloadModuleAsync(IModule module)
+        {
+            Task ret = new Task(() =>
+            {
+                if (Modules.UnloadModuleAsync(module).GetAwaiter().GetResult())
+                {
+                    module.ExitAsync().GetAwaiter().GetResult();
+                }
+            });
+            ret.Start();
+            return ret;
         }
 
         /// <summary>
@@ -251,7 +290,10 @@ namespace Modibot
                     }
                 }
             }
-            await discordClient.LogoutAsync();
+            if (discordClient != null)
+            {
+                await discordClient.LogoutAsync();
+            }
             Environment.Exit(0);
         }
 

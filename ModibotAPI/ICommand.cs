@@ -26,9 +26,9 @@ namespace ModibotAPI
         string FullDescription { get; }
 
         /// <summary>
-        /// Required privileges
+        /// Force required privileges
         /// </summary>
-        ReadOnlyDictionary<string, uint> RequiredPrivileges { get; }
+        ReadOnlyDictionary<string, uint> ForceRequiredPrivileges { get; }
 
         /// <summary>
         /// Command group

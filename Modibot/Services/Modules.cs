@@ -60,72 +60,81 @@ namespace Modibot.Services
         /// </summary>
         /// <param name="path">Path</param>
         /// <returns>Loaded module task</returns>
-        public async Task<IModule> LoadModuleAsync(string path)
+        public Task<IModule> LoadModuleAsync(string path)
         {
-            IModule ret = null;
-            try
-            {
-                if (path != null)
+            Task<IModule> ret = new Task<IModule>(() => {
+                IModule result = null;
+                try
                 {
-                    if (File.Exists(path))
+                    if (path != null)
                     {
-                        string full_path = System.IO.Path.GetFullPath(path);
-                        Assembly assembly = Assembly.LoadFile(full_path);
-                        if (assembly != null)
+                        if (File.Exists(path))
                         {
-                            Type[] types = assembly.GetTypes();
-                            if (types != null)
+                            string full_path = System.IO.Path.GetFullPath(path);
+                            Assembly assembly = Assembly.LoadFile(full_path);
+                            if (assembly != null)
                             {
-                                bool has_module_type = false;
-                                foreach (Type type in types)
+                                Type[] types = assembly.GetTypes();
+                                if (types != null)
                                 {
-                                    if (type != null)
-                                    {
-                                        if (type.IsClass)
-                                        {
-                                            if (typeof(IModule).IsAssignableFrom(type))
-                                            {
-                                                if (has_module_type)
-                                                {
-                                                    has_module_type = false;
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    has_module_type = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (has_module_type)
-                                {
+                                    bool has_module_type = false;
                                     foreach (Type type in types)
                                     {
                                         if (type != null)
                                         {
                                             if (type.IsClass)
                                             {
-                                                object instance = null;
-                                                if (Attribute.IsDefined(type, typeof(ServiceAttribute)))
-                                                {
-                                                    instance = serviceProvider.RequireService(type);
-                                                }
                                                 if (typeof(IModule).IsAssignableFrom(type))
                                                 {
-                                                    instance = ((instance == null) ? Activator.CreateInstance(type, true) : instance);
-                                                    IModule module = (IModule)instance;
-                                                    if (loadedModules.ContainsKey(module.Name))
+                                                    if (has_module_type)
                                                     {
-                                                        IModule old_module = loadedModules[module.Name];
-                                                        await old_module.ExitAsync();
-                                                        loadedModules[module.Name] = module;
+                                                        has_module_type = false;
+                                                        break;
                                                     }
                                                     else
                                                     {
-                                                        loadedModules.Add(module.Name, module);
+                                                        has_module_type = true;
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                    if (has_module_type)
+                                    {
+                                        foreach (Type type in types)
+                                        {
+                                            if (type != null)
+                                            {
+                                                if (type.IsClass)
+                                                {
+                                                    object instance = null;
+                                                    if (Attribute.IsDefined(type, typeof(ServiceAttribute)))
+                                                    {
+                                                        instance = serviceProvider.RequireService(type);
+                                                    }
+                                                    if (typeof(IModule).IsAssignableFrom(type))
+                                                    {
+                                                        instance = ((instance == null) ? Activator.CreateInstance(type, true) : instance);
+                                                        result = (IModule)instance;
+                                                        if (loadedModules.ContainsKey(result.Name))
+                                                        {
+                                                            IModule old_module = loadedModules[result.Name];
+                                                            old_module.ExitAsync().GetAwaiter().GetResult();
+                                                            loadedModules[result.Name] = result;
+                                                        }
+                                                        else
+                                                        {
+                                                            loadedModules.Add(result.Name, result);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        if (result != null)
+                                        {
+                                            foreach (IModule loaded_module in loadedModules.Values)
+                                            {
+                                                loaded_module.ModuleUnloadAsync(result).GetAwaiter().GetResult();
                                             }
                                         }
                                     }
@@ -134,11 +143,44 @@ namespace Modibot.Services
                         }
                     }
                 }
-            }
-            catch (Exception e)
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e);
+                }
+                return result;
+            });
+            ret.Start();
+            return ret;
+        }
+
+        /// <summary>
+        /// Unload module (asynchronous)
+        /// </summary>
+        /// <param name="module">Module</param>
+        /// <returns>Task</returns>
+        public Task<bool> UnloadModuleAsync(IModule module)
+        {
+            Task<bool> ret = new Task<bool>(() =>
             {
-                Console.Error.WriteLine(e);
-            }
+                bool result = false;
+                if (module != null)
+                {
+                    if (loadedModules.ContainsKey(module.Name))
+                    {
+                        if (loadedModules[module.Name] == module)
+                        {
+                            loadedModules.Remove(module.Name);
+                            foreach (IModule loaded_module in loadedModules.Values)
+                            {
+                                loaded_module.ModuleUnloadAsync(module).GetAwaiter().GetResult();
+                            }
+                            result = true;
+                        }
+                    }
+                }
+                return result;
+            });
+            ret.Start();
             return ret;
         }
 

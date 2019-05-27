@@ -26,6 +26,11 @@ namespace ModibotAPI
         /// <summary>
         /// Command execution has been denied
         /// </summary>
-        Denied
+        Denied,
+
+        /// <summary>
+        /// Command has been disabled
+        /// </summary>
+        Disabled
     }
 }

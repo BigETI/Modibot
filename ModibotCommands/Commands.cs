@@ -39,6 +39,11 @@ namespace ModibotCommands
         /// Available command groups
         /// </summary>
         public ReadOnlyCollection<ICommandGroup> AvailableCommandGroups => new ReadOnlyCollection<ICommandGroup>(new List<ICommandGroup>(commandGroups.Values));
+        
+        /// <summary>
+        /// Commands configuration
+        /// </summary>
+        public CommandsConfiguration CommandsConfiguration { get; internal set; }
 
         /// <summary>
         /// Add command
@@ -77,6 +82,21 @@ namespace ModibotCommands
                 {
                     commandGroups.Add(key, commandGroup);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Clear commands
+        /// </summary>
+        public void Clear()
+        {
+            if (commands != null)
+            {
+                commands.Clear();
+            }
+            if (commandGroups != null)
+            {
+                commandGroups.Clear();
             }
         }
 
@@ -224,6 +244,90 @@ namespace ModibotCommands
             }
             ICommand[] ret = result.ToArray();
             result.Clear();
+            return ret;
+        }
+
+        /// <summary>
+        /// Can command execute
+        /// </summary>
+        /// <param name="command">Command</param>
+        /// <returns>"true" if command can be executed, otherwise "false"</returns>
+        public bool CanCommandExecute(ICommand command)
+        {
+            bool ret = false;
+            if ((command != null) && (CommandsConfiguration != null))
+            {
+                string key = command.Name.Trim().ToLower();
+                CommandConfigurationData command_configuration_data = null;
+                if (CommandsConfiguration.Data.Commands.ContainsKey(key))
+                {
+                    command_configuration_data = CommandsConfiguration.Data.Commands[key];
+                    if (command_configuration_data == null)
+                    {
+                        command_configuration_data = new CommandConfigurationData();
+                        CommandsConfiguration.Data.Commands[key] = command_configuration_data;
+                    }
+                }
+                else
+                {
+                    command_configuration_data = new CommandConfigurationData();
+                    CommandsConfiguration.Data.Commands.Add(key, command_configuration_data);
+                }
+                ret = command_configuration_data.Enabled;
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Get command required privileges
+        /// </summary>
+        /// <param name="command">Command</param>
+        /// <returns>Command</returns>
+        public IReadOnlyDictionary<string, uint> GetRequiredCommandPrivileges(ICommand command)
+        {
+            Dictionary<string, uint> ret = new Dictionary<string, uint>();
+            if (command != null)
+            {
+                if (CommandsConfiguration != null)
+                {
+                    string key = command.Name.Trim().ToLower();
+                    if (CommandsConfiguration.Data.Commands.ContainsKey(key))
+                    {
+                        CommandConfigurationData command_configuration = CommandsConfiguration.Data.Commands[key];
+                        if (command_configuration != null)
+                        {
+                            foreach (KeyValuePair<string, uint> privilege in command_configuration.Privileges)
+                            {
+                                if (ret.ContainsKey(privilege.Key))
+                                {
+                                    if (ret[privilege.Key] < privilege.Value)
+                                    {
+                                        ret[privilege.Key] = privilege.Value;
+                                    }
+                                }
+                                else
+                                {
+                                    ret.Add(privilege.Key, privilege.Value);
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (KeyValuePair<string, uint> force_required_privilege in command.ForceRequiredPrivileges)
+                {
+                    if (ret.ContainsKey(force_required_privilege.Key))
+                    {
+                        if (ret[force_required_privilege.Key] < force_required_privilege.Value)
+                        {
+                            ret[force_required_privilege.Key] = force_required_privilege.Value;
+                        }
+                    }
+                    else
+                    {
+                        ret.Add(force_required_privilege.Key, force_required_privilege.Value);
+                    }
+                }
+            }
             return ret;
         }
     }

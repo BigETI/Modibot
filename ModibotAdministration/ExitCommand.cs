@@ -28,9 +28,9 @@ namespace ModibotAdministration
         public string FullDescription => "This command terminates the current bot process";
 
         /// <summary>
-        /// Required privileges
+        /// Force required privileges
         /// </summary>
-        public ReadOnlyDictionary<string, uint> RequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
+        public ReadOnlyDictionary<string, uint> ForceRequiredPrivileges { get; } = new ReadOnlyDictionary<string, uint>(new Dictionary<string, uint>()
         {
             { "bot.administrator", 1U }
         });
